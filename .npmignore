@@ -1,0 +1,15 @@
+.git
+.idea
+.vscode
+.DS_Store
+node_modules
+src
+.babelrc
+.gitignore
+.npmignore
+vite.config.js
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+*.log
+CHANGELOG.md
