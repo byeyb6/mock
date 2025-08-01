@@ -38,9 +38,9 @@ function natural(min, max) {
   max = Number.parseInt(max + '');
   if (isNaN(min)) {
     min = 0;
-    max = 9007199254740992;
+    max = Number.MAX_SAFE_INTEGER;
   } else if (isNaN(max)) {
-    max = 9007199254740992;
+    max = Number.MAX_SAFE_INTEGER;
   } else {
     if (min > max) {
       [min, max] = [max, min];
@@ -65,10 +65,10 @@ function integer(min, max) {
   min = Number.parseInt(min + '');
   max = Number.parseInt(max + '');
   if (isNaN(min)) {
-    min = -9007199254740992;
-    max = 9007199254740992;
+    min = Number.MIN_SAFE_INTEGER;
+    max = Number.MAX_SAFE_INTEGER;
   } else if (isNaN(max)) {
-    max = 9007199254740992;
+    max = Number.MAX_SAFE_INTEGER;
   } else {
     if (min > max) {
       [min, max] = [max, min];
@@ -118,7 +118,7 @@ function character(pool) {
   pools.alpha = pools.lower + pools.upper;
   pools['undefined'] = pools.lower + pools.upper + pools.number + pools.symbol;
 
-  pool = pools[('' + pool).toLowerCase()] || pool;
+  pool = pools[('' + pool).toLowerCase()] ?? pool;
   return pool.charAt(int(0, pool.length - 1));
 }
 
@@ -147,11 +147,11 @@ function string(pool, min, max) {
       // ( pool, length )
       if (typeof arguments[0] === 'string') {
         len = min;
-      } else {
-        // ( min, max )
-        len = int(pool, min);
-        pool = undefined;
+        break;
       }
+      // ( min, max )
+      len = int(pool, min);
+      pool = undefined;
       break;
     case 3:
       len = int(min, max);
@@ -161,7 +161,7 @@ function string(pool, min, max) {
   }
   let text = '';
   for (let i = 0; i < len; i++) {
-    text += character(pool);
+    text += char(pool);
   }
   return text;
 }

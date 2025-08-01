@@ -53,11 +53,11 @@ function county(prefix, delimiter = '-') {
  * @returns {string}
  */
 function zip(len = 6) {
-  let zip = '';
-  for (let i = 0; i < len; i++) {
-    zip += basic.int(0, 9);
+  let num = Number.parseInt(len + '');
+  if (isNaN(num)) {
+    num = 6;
   }
-  return zip;
+  return (basic.int(0, 10 ** num - 1) + '').padStart(num, '0');
 }
 
 export default {

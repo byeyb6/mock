@@ -4,29 +4,28 @@ import {isLightColor} from '../util.js';
 
 /**
  * 生成随机图片
- * @param {string} [size] 最大600x600
+ * @param {string} [size] 100x100到600x600
  * @param {string} [background]
  * @param {string} [text]
  * @returns {string}
  */
 export function image(size, background, text) {
+  let width;
+  let height;
   if (!/^\d+x\d+$/.test(size)) {
-    size = `${basic.int(100, 600)}x${basic.int(100, 600)}`;
+    [width, height] = [basic.int(100, 600), basic.int(100, 600)];
+  } else {
+    [width, height] = size.split('x');
+    width = Math.max(100, Math.min(Number.parseInt(width), 600));
+    height = Math.max(100, Math.min(Number.parseInt(height), 600));
   }
   if (!/^#([0-9A-F]{3}){1,2}$/i.test(background) && !/^rgba?\(.*\)/.test(background)) {
     background = color.hex();
   }
   if (!text) {
-    text = size;
+    text = `${width}x${height}`;
   }
   const foreground = isLightColor(background) ? '#000' : '#fff';
-  let [width, height] = size.split('x');
-  if (width > 600) {
-    width = 600;
-  }
-  if (height > 600) {
-    height = 600;
-  }
   // 生成svg矢量图
   const svgCode = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">
