@@ -1,3 +1,4 @@
+import {typeOf} from '../util.js';
 import helper from './helper.js';
 
 /**
@@ -11,21 +12,21 @@ import helper from './helper.js';
  * @returns String
  */
 export function formatDate(date, fmt = 'yyyy-MM-dd hh:mm:ss') {
-  if (Object.prototype.toString.call(date) !== '[object Date]') {
+  if (typeOf(date) !== 'date') {
     date = new Date(date);
   }
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     date = new Date();
   }
   let obj = {
-    'y+': date.getFullYear(), //年
-    'M+': date.getMonth() + 1, //月份
-    'd+': date.getDate(), //日
-    'h+': date.getHours(), //小时
-    'm+': date.getMinutes(), //分
-    's+': date.getSeconds(), //秒
-    'q+': Math.floor((date.getMonth() + 3) / 3), //季度
-    'S': date.getMilliseconds(), //毫秒
+    'y+': date.getFullYear(),
+    'M+': date.getMonth() + 1,
+    'd+': date.getDate(),
+    'h+': date.getHours(),
+    'm+': date.getMinutes(),
+    's+': date.getSeconds(),
+    'q+': Math.floor((date.getMonth() + 3) / 3),
+    'S': date.getMilliseconds(),
   };
   if (/w+/.test(fmt)) {
     const firstDate = new Date(obj['y+'], 0, 1);
@@ -59,7 +60,7 @@ export function formatDate(date, fmt = 'yyyy-MM-dd hh:mm:ss') {
 function _randomDate(min, max) {
   min = min === undefined ? new Date(0) : min;
   max = max === undefined ? new Date() : max;
-  return new Date(Math.random() * (max.getTime() - min.getTime()));
+  return new Date(min.getTime() + Math.random() * (max.getTime() - min.getTime()));
 }
 
 /**

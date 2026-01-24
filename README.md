@@ -3,13 +3,13 @@
 ## 安装
 
 ```
-npm install @vpsvl/mock -D
+npm install @byeyb/mock -D
 ```
 
 ## 使用
 
 ```javascript
-import Mock from '@vpsvl/mock';
+import Mock from '@byeyb/mock';
 
 // 扩展占位符方法直接在Mock.random上定义方法即可, 属性名必须以custom开头
 Mock.random.customExample = () => Mock.random.pick(['成功', '失败']);

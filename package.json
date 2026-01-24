@@ -1,5 +1,5 @@
 {
-  "name": "@vpsvl/mock",
+  "name": "@byeyb/mock",
   "version": "1.0.0",
   "type": "module",
   "description": "生成随机数据",
@@ -7,14 +7,9 @@
     "mock",
     "random"
   ],
-  "main": "dist/mock.js",
-  "exports": {
-    "import": "./dist/mock.js",
-    "require": "./dist/mock.c.js",
-    "default": "./dist/mock.js"
-  },
+  "main": "dist/index.js",
   "scripts": {
-    "build": "vite build"
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -27,7 +22,8 @@
   },
   "homepage": "https://github.com/vpsvl/mock#readme",
   "devDependencies": {
-    "vite": "^7.0.0"
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.56.0"
   },
   "engines": {
     "node": ">=12.7.0"

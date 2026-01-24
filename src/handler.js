@@ -218,7 +218,8 @@ const Handler = {
   },
   number(options) {
     let result, parts;
-    if (options.rule.decimal || options.rule.decimal === 0) { // float
+     // float
+    if (options.rule.decimal || options.rule.decimal === 0) {
       options.template += '';
       parts = options.template.split('.');
       // 'float1|.1-10': 10,
@@ -227,13 +228,14 @@ const Handler = {
       // 'float4|.3-10': 123.123,
       parts[0] = options.rule.range ? options.rule.count : parts[0];
       parts[1] = (parts[1] || '').slice(0, options.rule.dcount);
-      while (parts[1].length < options.rule.dcount) {
-        parts[1] +=
-          // 最后一位不能为 0：如果最后一位为 0，会被 JS 引擎忽略掉。
-          parts[1].length < options.rule.dcount - 1 ? Random.character('number') : Random.character('123456789');
+      const parts1Length = parts[1].length;
+      while (parts1Length < options.rule.dcount) {
+        // 最后一位不能为 0，否则转数字会被忽略掉
+        parts[1] += parts1Length < options.rule.dcount - 1 ? Random.character('number') : Random.character('123456789');
       }
       result = Number.parseFloat(parts.join('.'));
-    } else { // integer
+    } else {
+       // integer
       // 'grade1|1-100': 1,
       result = options.rule.range && !options.rule.parameters[2] ? options.rule.count : options.template;
     }
