@@ -1,4 +1,3 @@
-import {typeOf} from '../util.js';
 import helper from './helper.js';
 
 /**
@@ -7,46 +6,64 @@ import helper from './helper.js';
  * 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
  * formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss.S') ==> 2006-07-02 08:09:04.423
  * formatDate(new Date(), 'yyyy-M-d h:m:s.S')      ==> 2006-7-2 8:9:4.18
- * @param [date]
- * @param [fmt]
- * @returns String
+ * @param {Date|string|number} date
+ * @param {string} fmt
+ * @returns {string}
  */
 export function formatDate(date, fmt = 'yyyy-MM-dd hh:mm:ss') {
-  if (typeOf(date) !== 'date') {
+  if (Object.prototype.toString.call(date) !== '[object Date]') {
     date = new Date(date);
   }
-  if (Number.isNaN(date.getTime())) {
+  if (isNaN(date.getTime())) {
     date = new Date();
   }
-  let obj = {
-    'y+': date.getFullYear(),
-    'M+': date.getMonth() + 1,
-    'd+': date.getDate(),
-    'h+': date.getHours(),
-    'm+': date.getMinutes(),
-    's+': date.getSeconds(),
-    'q+': Math.floor((date.getMonth() + 3) / 3),
-    'S': date.getMilliseconds(),
+
+  const o = {
+    M: date.getMonth() + 1,
+    d: date.getDate(),
+    h: date.getHours(),
+    m: date.getMinutes(),
+    s: date.getSeconds(),
+    q: Math.floor(date.getMonth() / 3) + 1,
+    S: date.getMilliseconds(),
   };
+
+  // 计算周数（当年第几周）
+  let weekNum = 0;
   if (/w+/.test(fmt)) {
-    const firstDate = new Date(obj['y+'], 0, 1);
-    let firstDayWeek = firstDate.getDay() + 1;
-    const firstWeekMs = (7 - firstDayWeek) * 24 * 60 * 60 * 1000;
-    const ms = date.getTime() - firstDate.getTime() - firstWeekMs;
-    obj['w+'] = Math.floor(ms / 604800000) + 2;
+    const year = date.getFullYear();
+    const firstDay = new Date(year, 0, 1);
+    // 当年第一天是星期几（0=周日, 1=周一, ..., 6=周六）
+    const firstDayOfWeek = firstDay.getDay();
+    // 当年第一个周一的日期
+    const firstMonday = new Date(year, 0, 1 + (firstDayOfWeek === 0 ? 1 : (8 - firstDayOfWeek) % 7));
+    // 目标日期与第一个周一之间的毫秒差
+    const diffMs = date.getTime() - firstMonday.getTime();
+    // 第几周（从1开始）
+    weekNum = diffMs < 0 ? 1 : Math.floor(diffMs / 604800000) + 1;
+    o.w = weekNum;
   }
-  for (let k in obj) {
-    const rst = new RegExp(k).exec(fmt);
-    if (!rst) {
+
+  // 年：匹配 1~4 个 y
+  const yearMatch = /(y+)/.exec(fmt);
+  if (yearMatch) {
+    const yearStr = String(date.getFullYear());
+    const len = yearMatch[1].length;
+    fmt = fmt.replace(yearMatch[1], yearStr.slice(-Math.min(len, 4)));
+  }
+
+  // 其他占位符：逐个匹配连续出现的相同字母
+  for (const k in o) {
+    const reg = new RegExp(`(${k}+)`);
+    const match = reg.exec(fmt);
+    if (!match) {
       continue;
     }
-    if (k === 'S') {
-      fmt = fmt.replace('S', obj.S + '');
-    } else {
-      const str = (obj[k] + '').padStart(4, '0');
-      fmt = fmt.replace(rst[0], str.substring(4 - rst[0].length, 4));
-    }
+    const len = match[1].length;
+    const val = String(o[k]);
+    fmt = fmt.replace(match[1], len === 1 ? val : val.padStart(len, '0'));
   }
+
   return fmt;
 }
 

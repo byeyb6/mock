@@ -9,7 +9,7 @@ import address from './address.js';
 import helper from './helper.js';
 import misc from './misc.js';
 
-const random = new Proxy({
+const base = {
   ...basic,
   ...date,
   ...image,
@@ -20,17 +20,25 @@ const random = new Proxy({
   ...address,
   ...helper,
   ...misc,
-}, {
-  // 保证random属性的值为function
-  set(target, property, value) {
-    if (typeof property === 'string' && !/^custom/.test(property)) {
-      throw new Error(`扩展占位符属性必须以custom开头`);
+};
+
+const random = new Proxy(base, {
+  set(target, property, value, receiver) {
+    // 已有内置属性：禁止覆盖
+    if (Object.prototype.hasOwnProperty.call(target, property)) {
+      throw new Error('内置API禁止覆盖修改，只能新增自定义属性');
     }
-    return Reflect.set(
-      target,
-      property,
-      typeof value === 'function' ? value : () => value,
-    );
+    // 新增属性：非函数自动包装成取值函数；自定义属性后续用户可自行覆盖
+    const finalValue = typeof value === 'function' ? value : () => value;
+    return Reflect.set(target, property, finalValue, receiver);
+  },
+  deleteProperty(target, property) {
+    // 内置属性禁止删除
+    if (Object.prototype.hasOwnProperty.call(target, property)) {
+      throw new Error('内置API禁止删除');
+    }
+    // 用户自己新增的自定义属性，允许删除
+    return Reflect.deleteProperty(target, property);
   },
 });
 

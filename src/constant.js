@@ -1,5 +1,5 @@
 /*
-  RE_KEY
+  RE_KEY 规则清单
     'name|min-max': value
     'name|count': value
     'name|min-max.dmin-dmax': value
@@ -8,10 +8,11 @@
     'name|count.dcount': value
     'name|+step': value
 
-    1 name, 2 step, 3 range [ min, max ], 4 drange [ dmin, dmax ]
-
-  RE_PLACEHOLDER
-      placeholder(*)
+  捕获组说明：
+  1: 属性名 name
+  2: step 自增步长（+step分支）
+  3: 整数段 rangeStr (min-max / count)
+  4: 小数段 decimalStr (dmin-dmax / dcount)
 */
 export default {
   GUID: 1,

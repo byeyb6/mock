@@ -4,12 +4,12 @@ import helper from './helper.js';
 
 /**
  * 随机生成一个url
- * @param {string} [protocol]
+ * @param {string} [prot]
  * @param {string} [host]
  * @returns {string}
  */
-function url(protocol, host) {
-  return `${protocol ?? protocol()}://${host ?? domain()}/${text.word()}`;
+function url(prot, host) {
+  return `${prot ?? protocol()}://${host ?? domain()}/${text.word()}`;
 }
 
 /**
